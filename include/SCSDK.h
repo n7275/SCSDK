@@ -26,6 +26,9 @@
 
 *******************************************************************************/
 
+#ifndef SCSDK
+#define SCSDK
+
 enum entityType{
   ELECTRIC_PUMP,
   TANK,
@@ -63,3 +66,4 @@ typedef struct {
 } electricalComponent;
 
   
+#endif
