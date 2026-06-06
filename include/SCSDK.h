@@ -24,10 +24,32 @@
   See http://mwhume.space/scsdk
   for more details.
 
+  2026-06-06 MWH  Initial design implimentation
+
+
+  ---------------------------------------------------------------------------
+
+                        ____   ____ ____  ____  _  __
+                       / ___| / ___/ ___||  _ \| |/ /
+                       \___ \| |   \___ \| | | | ' / 
+                        ___) | |___ ___) | |_| | . \ 
+                       |____/ \____|____/|____/|_|\_\
+
+                           Systems-Components SDK
+
+ SCSDK is heavily inspired by the SPSDK (Systems and Panel SDK) library
+ for Orbiter Spaceflight Simulator, written by Radu054 and heavily modified
+ by the NASSP development from 2003-2026+. This library attempts to
+ address many of the chalenges and lessons-learned that the NASSP
+ developers in their efforts to simulate the hardware and systems of
+ the Apollo Program's spacecraft.
+
 *******************************************************************************/
 
 ifndef SCSDK
 #define SCSDK
+
+#define NAME_LENGTH 64;
 
 enum scsdk_entity_type{
   ELECTRIC_PUMP,
@@ -40,6 +62,7 @@ struct scsdk_entity{
   int ID;
   int flags;
   enum scsdk_entity_type type;
+  char[NAME_LENGTH] name;
 };
 
 // Structure containing all entities
@@ -48,11 +71,6 @@ typedef struct{
   unsigned int num_entities;
 } SCSDKInstance;
 
-int SCSDK_Update_Systems(double dt, SCSDKInstance* pSCSDK){
-  for(int index; index < pSCSDK->num_entities; intex++){
-    //do update stuff
-  }
-}
 
 /*****************************************************************************
  Linkage Table Definition
@@ -67,22 +85,53 @@ union scsdk_linkage_property{
 };
 
 enum scsdk_linkage_type{
-  is_a_member_of
+  is_a_member_of,
+  propagate_bidirectional,
+  propagate_A2B,
+  propagate_B2A,
 };
-  
+
+union scsdk_component;
 
 struct scsdk_linkage_table{
-  struct entity* pEntA;
-  struct entity* pEntB;
+  union A {
+    struct scsdk_entity* p_ent_A;
+    union scsdk_component* p_comp_A;
+  };
+
+  union B {
+    struct scsdk_entity* p_ent_B;
+    union scsdk_component* p_comp_B;
+  };
+  
   struct scsdk_linkage_type connection_type;
   struct scsdk_linkage_property connection_property;
 };
 
+/*****************************************************************************
+ Dispatcher and Worker Function Definitions
+******************************************************************************/
+
+//placeholder --MWH
+int SCSDK_Update_Systems(double dt, SCSDKInstance* pSCSDK){
+  for(int index; index < pSCSDK->num_entities; intex++){
+    //do update stuff
+  }
+}
 
 /*****************************************************************************
  All component types defined below.
 ******************************************************************************/
 
+struct electrical_state_primitive{
+  double voltage;       // Volts
+  double current;       // Amps
+  double frequency;     // Hertz
+  double phase_angle;   // Radians
+}
 
+union scsdk_component{
+  struct electrical_state_primitive e_state;
+};
   
 #endif
