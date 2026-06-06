@@ -29,21 +29,21 @@
 ifndef SCSDK
 #define SCSDK
 
-typedef enum scsdk_entity_type{
+enum scsdk_entity_type{
   ELECTRIC_PUMP,
   TANK,
   PIPE
-} scsdk_entity_type_t;
+};
 
 //Main entity type
-typedef struct entity{
+struct scsdk_entity{
   int ID;
-  entityType type;
   int flags;
-} entity_t;
+  enum scsdk_entity_type type;
+};
 
 // Structure containing all entities
-typedef struct {
+typedef struct{
   entity* entities;
   unsigned int num_entities;
 } SCSDKInstance;
@@ -58,25 +58,25 @@ int SCSDK_Update_Systems(double dt, SCSDKInstance* pSCSDK){
  Linkage Table Definition
 ******************************************************************************/
 
-typedef union scsdk_linkage_property{
+union scsdk_linkage_property{
   int direction;
   double amount;
   bool is_active;
   long l_int_property;
   double d_double_property;
-} scsdk_linkage_property_t;
+};
 
-typedef enum scsdk_linkage_type{
-  is_a_member_of;
+enum scsdk_linkage_type{
+  is_a_member_of
+};
   
-} scsdk_linkage_type_t;
 
-typedef struct scsdk_linkage_table_struct{
-  entity* pEntA;
-  entity* pEntB;
-  scsdk_linkage_type_t connection_type;
-  scsdk_linkage_property_t connection_property;
-}scsdk_linkage_table_struct_t;
+struct scsdk_linkage_table{
+  struct entity* pEntA;
+  struct entity* pEntB;
+  struct scsdk_linkage_type connection_type;
+  struct scsdk_linkage_property connection_property;
+};
 
 
 /*****************************************************************************
@@ -84,16 +84,5 @@ typedef struct scsdk_linkage_table_struct{
 ******************************************************************************/
 
 
-
-
-//bad example, remove
-/*
-#define MAX_ELEC_I_O = 4;
-typedef struct {
-  int ID;
-  double inputVoltage[MAX_ELEC_I_O];
-  double outputVoltage[MAX_ELEC_I_O];
-} electricalComponent;
-*/
   
 #endif
