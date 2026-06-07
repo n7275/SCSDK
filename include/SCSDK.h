@@ -50,6 +50,7 @@ ifndef SCSDK
 #define SCSDK
 
 #define NAME_LENGTH 64;
+#define MAX_SWITCH_STATES 8;
 
 enum scsdk_entity_type{
   ELECTRIC_PUMP,
@@ -85,10 +86,15 @@ union scsdk_linkage_property{
 };
 
 enum scsdk_linkage_type{
+  nil,
   is_a_member_of,
   propagate_bidirectional,
   propagate_A2B,
   propagate_B2A,
+  wired_to,
+  fluid_connection,
+  time_propagate,
+  external
 };
 
 union scsdk_component;
@@ -112,11 +118,48 @@ struct scsdk_linkage_table{
  Dispatcher and Worker Function Definitions
 ******************************************************************************/
 
-//placeholder --MWH
-int SCSDK_Update_Systems(double dt, SCSDKInstance* pSCSDK){
-  for(int index; index < pSCSDK->num_entities; intex++){
-    //do update stuff
+
+int scsdk_update_connections(struct scsdk_linkage_table* p_linkage_table){
+  int linkage_table_index = 0;
+  int result = 0;
+  while(p_linkage_table){
+    switch(p_linkage_table[linkage_table_index]->connection_type){
+    case:nil
+	p_linkage_table = NULL;
+      result = -1;
+      break;
+    case:is_a_member_of
+	result = 0;
+      break;
+    case:propagate_bidirectional
+	result = 1;
+      break;
+    case:propagate_A2B
+	result = 2;
+      break;
+    case:propagate_B2A
+	result = 3;
+      break;
+    case:wired_to
+	result = 4;
+      break;
+    case:fluid_connection
+	result = 5;
+      break;
+    case:time_propagate
+	result = 6;
+      break;
+    case:external
+	result = 7;
+      break;
+    default:
+      p_linkage_table = NULL;
+      result = -2;
+      break;
+    }
+    ++linkage_table_index;
   }
+  return result;
 }
 
 /*****************************************************************************
@@ -128,7 +171,12 @@ struct electrical_state_primitive{
   double current;       // Amps
   double frequency;     // Hertz
   double phase_angle;   // Radians
-}
+};
+
+struct switch_state_primitive{
+  unsigned state;
+  bool active [MAX_SWITCH_STATES];
+};
 
 union scsdk_component{
   struct electrical_state_primitive e_state;
